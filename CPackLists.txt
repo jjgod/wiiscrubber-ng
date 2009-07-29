@@ -1,0 +1,58 @@
+# CPack stuff for WiiScrubber NG, split in a separate file for convenience
+include (InstallRequiredSystemLibraries)
+
+set (CPACK_PACKAGE_NAME "wiiscrubber-ng")
+set (CPACK_PACKAGE_VERSION_MAJOR ${WIISCRUBBER_VERSION_MAJOR})
+set (CPACK_PACKAGE_VERSION_MINOR ${WIISCRUBBER_VERSION_MINOR})
+set (CPACK_PACKAGE_VERSION_PATCH ${WIISCRUBBER_VERSION_PATCH})
+set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "Make Nintendo Wii discs more compressable")
+set (CPACK_PACKAGE_VENDOR "SukkoPera")
+set (CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
+set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
+set (CPACK_PACKAGE_INSTALL_DIRECTORY "WiiScrubber ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
+set (CPACK_PACKAGE_EXECUTABLES "wiiscrubber" "WiiScrubber")
+
+set (CPACK_SOURCE_GENERATOR "TBZ2;ZIP")
+set (CPACK_SOURCE_IGNORE_FILES
+	"/CVS/"
+	"/\\\\.svn/"
+	"~$"
+	"tags"
+	"\\\\.kdevses$"
+	"\\\\.kdevelop\\\\.pcs$"
+	"/BUILD.*/"
+	"/RELEASES/"
+	"/utils/"
+	"/doc.*/"
+	".DS_Store"
+	"/dist/key.bin"
+)
+set (CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
+
+if (WIN32 AND NOT UNIX)
+	set (CPACK_GENERATOR "NSIS;ZIP")
+	# There is a bug in NSI that does not handle full unix paths properly. Make
+	# sure there is at least one set of four (4) backlasshes.
+#	set (CPACK_PACKAGE_ICON "${CMake_SOURCE_DIR}/Utilities/Release\\\\InstallIcon.bmp")
+#	set (CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\MyExecutable.exe")
+	set (CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} installer")
+	set (CPACK_NSIS_HELP_LINK "http:\\\\\\\\wii.console-tribe.com")
+	set (CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\www.my-personal-home-page.com")
+	set (CPACK_NSIS_CONTACT "software@sukkology.net")
+	set (CPACK_NSIS_MODIFY_PATH ON)
+
+	set (CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}-Win32")
+elseif (APPLE)
+	# WARNING: On MacOS X you need to copy COPYING to Copying.txt manually (COPYING is refused by the package creator)
+	set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/Copying.txt")
+	set (CPACK_GENERATOR "PackageMaker;ZIP")
+	set (CPACK_STRIP_FILES "bin/wiiscrubber")
+	set (CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}-MacUniversalBin")
+else (WIN32 AND NOT UNIX)
+	set (CPACK_GENERATOR "TBZ2")
+	set (CPACK_STRIP_FILES "bin/wiiscrubber")
+#   set (CPACK_SOURCE_STRIP_FILES "")
+	set (CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}-LinuxBin")
+endif(WIN32 AND NOT UNIX)
+
+include (CPack)

@@ -1,0 +1,196 @@
+This file comes from the documentation of the original WiiScrubber. As such,
+some parts of it might not apply to WiiScrubber NG.
+===============================================================================
+
+Q1. What does it actually do?
+A1. It finds out where in the disc image the data is and changes the rest of the data
+    to 0xFFs.
+
+Q2. And this does what?
+A2. It allows compression programs to then compress the image. After you have run the software,
+    in 'classic mode', you can compress the resulting ISO and get a size similar to that indicated
+	in the top right panel.
+
+Q3. What does the TRUCHA option do?
+A3. Well one of the other ways of overwriting the non-compressable empty space is by
+    overwriting it with 0's. This has the advantage of, since it is using TRUCHA, actually
+	correcting the SHA tables.
+
+Q4. But TRUCHA won't work with IOS37 will it so it's a bit pointless?
+A4. Most likely BUT it's very much a case of wait and see. Changing the disc to boot
+    directly instead of from the system menu would possibly still allow it to work anyways.
+	It was also a bit of development I was doing for multidisc :) Some people haven't
+	updated to IOS37 anyways. The downgrader also makes it worthwile.
+
+Q5. Multidisc????
+A5. Well since I know where the data is on the disc, and can add files,directories etc. It's
+    only a small step to create an image that contains the files of several other ISO images.
+	I "only" need to finalise the "merge fst.bins while checking for duplicate filenames and
+	relocating all the files in the second disc to the free space on the first disc" function.
+	The TRUCHA option adds 5 files to the image in the root directory and then maps their data
+	to the free space.  This is made even easier by the
+	partition options now implemented as you could simply extract several partitions worth of data, merge
+	the files and add on a loader/chooser. I'll give it a week from when this software is released until
+	a multidisc maker appears (change the main.dol names for each disc, put into seperate directories,
+	modify the main.dols to use the new directories, have a menu on screen that allows you to choose
+	and run the different (renamed) main.dols).
+	
+Q6. How do I scrub a disc normally?
+A6. You can only do this if you have a copy of the key.bin file in the same directory as the software.
+
+	Depending on whether you want to create the DIFF file then make a selection from ISO, DIFF or BOTH
+	A DIFF file is a copy of the data that was 'scrubbed' from the ISO and allows you to unscrub at a
+	later date if you so wish.
+
+	Depending on whether you want to maintain the header information then choose either YES or NO from
+	the keep headers block. Given the ease of checking sha tables it's probably a bit pointless keeping them
+	and adds 1k per cluster to the storage if you do (about an extra 150Meg over a disc image)
+
+	Depending on whether you want to do TRUCHA scrubbing or normal then chose 0xFF or TRUCHA from the scrub type
+	box
+
+	0xFF Mode:
+
+    1. Click on 'open ISO'
+	2. Wait for it to be parsed. If all looks OK then click on 'clean and save'
+	3. You will be prompted for where to save the file. Choose a path and name
+	   - I recommend using a different drive to the source ISO.
+	4. Confirm your selection from the pop-up prompts
+	5. Wait until it says it's finished
+	6. Compress the newly created file with whatever archive software you want
+
+	Trucha Mode:
+    1. Click on 'open ISO'
+	2. Wait for it to be parsed. If all looks OK then click on 'clean and save'
+	3. You will be asked to confirm you want to save the file.
+	4. Empty files and a replacement fst.bin, a fake fst.bin and a replacement boot.bin are created
+	   in the same directory as the ISO
+	5. Wait until it says it's finished
+	6. Follow the instructions in the final pop-up
+	7. Compress the newly created file with whatever archive software you want
+
+
+Q7. How do I unscrub a disc?
+A7. You do not need a copy of key.bin for this operation.
+
+	You will need at least 4.3Gig of storage space for this
+
+	1. Click on UNSCRUB IMAGE
+	2. Choose the ISO image to unscrub and the choose the DIFF file to use
+	3. Choose where to save the unscrubbed image
+	4. Select yes from the 'are you sure' popups.
+	5. Wait.
+
+Q8. Why cant I create files bigger than 4Gig?
+A8. You have the destination partition formatted to FAT32 which only allows files upto 4Gig in size
+
+Q9. How do I Save a file from an ISO?
+A9. Open the ISO and then right hand click on the file in the disc display. Then choose "extract" from the
+    pop-up menu
+
+Q10. How do I load a file?
+A10. Similar to A9. Load the ISO and choose 'replace' from the pop-up menu. If a file is bigger than the one originally
+     there then the software will try and relocate it to another part of the disc image that does have enough space
+	 to accomodate it and the update the fst.bin or boot.bin accordingly.
+
+Q11. Does Load work on Gamecube discs?
+A11. No. As all the work is based around encrypted partitions.
+
+Q12. I think I've found a bug!
+A12. Then pop along to www.gbatemp.net and let me know
+
+Q13. What is the point of deleting a partition?
+A13. That allows you to delete, for example, an update partition from the disc image. Effectively
+     it then functions in a similar manner to having 'brickblocked' it. It has the added advantage of not
+	 including any Nintendo firmware image and knocks a bit more off the scrubbed ISO size.
+
+Q14. Why would I need to resize a partition?
+A14. Some ISO images have a partition size set to, say, 4Gig while having the datasize set to only a few
+     hundred Megs. This then means that extra files cannot be added into the disc partition OR larger files
+	 cannot be moved in either as the datasize will not allow it.
+
+Q15. Do I have to unscrub an image before burning it?
+A16. Nay, nay and thrice times nay. Just unrar/zip/7 Zip the image which should then give you a 4.5 Gig (or whatever)
+     file and then burn it. Imageburn is the recommended application for burning.
+
+Q16. Whats the best compressor to use?
+A16. I use winrar but other people use 7 Zip. When compressing you might as well choose the 'fastest' option as there
+     is a negligible difference in output compared to a massive decrease in compression time. It's why I never implemented
+	 a compression option.
+
+Q17. Will you write a Linux and Mac version?
+A17. No. I don't have the time at present (or the hardware in the Mac instance). I'm more than willing to help anyone who wants
+     to though. Source code is always available (and I usually comment what I do :) )
+
+Q18. Why did you stop developing it?
+A18. It's use is now moving away from what was originally intended (the partition stuff and the trucha bits). It's time for
+     new apps.
+
+	 I'm also bored of developing it at the moment and it seems a good time to stop.
+
+Q19. Does getting rid of the headers use the TRUCHA bug?
+A19. No. It works as a 'normal' scrub but doesn't keep the 1k of encrypted header. This means it's easier to spot in software
+     but as the headers are incorrect in relation to the data in a scrubbed disc it would fail a simple SHA test either with
+	 or without them.
+
+Q20. I've heared that discs that have been scrubbed cannot be opened by Trucha signer. Is this true?
+A20. No. Trucha, like scrubber, has it's own set of bugs and scrubbing the disc does not trigger any of those. Trucha cannot open some
+     discs as standard due to some of it's limitations on file count and not handling more than 2 partitions. It's still a very
+	 nice application.
+
+Q21. What about changing the boot mode of the disc?
+A21. Depending on where you right click in the display, you'll get a different menu. Doing the right hand click over "WII DISC"
+     allows you to change the boot mode. In short, by setting the first byte of the disc to '0' it bypasses the system disc
+	 channel menu. The usual value is 'R'.
+
+Q22. What on earth is "shuffling"?
+A22. This is where the partitions on the disc have been madified in some way and there is a gap between them.
+     Shuffling moves all the partitions upto the end of the previous partition and has the effect of moving
+	 all the intergap partitions upto the end of the disc. e.g. if you delete the update partition you can then
+	 'shuffle' the data partition down to where the update partition started.
+
+Q23. What does the 'Shrink' option do?
+A23. This takes all the data in the partition and moves it all upto the start of the partition, moving all the free space
+     to the end. This uses the Trucha bug as the H3 table gets regenerated.
+
+Q24. Why bother changing the boot mode?
+A24. Why not? It allows for the disc to be booted as an automatic instead of manual mode. This is just another feature I
+     implemented while playing around.
+
+Q25. What do the other exe's in the Rar do?
+A25. MakeWiiKeyBin.exe alleviates the need to distribute key.bin - it makes it for you
+	 Partition builder allows you to take a directory of data and create a partition from it 
+	 - that can then be put into a disc image by wiiscrubber.
+	 To build a partition you will need:
+	 1. A partition.bin, apploader.img, boot.bin and bi2.bin taken from an existing disc
+	 2. A Main.dol
+	 3. A boot.bin and bi2.bin taken from an existing disc
+	 4. Some other files that you want to put in the image - max filecount is about 0x20000
+
+Q26. Why doesn't the extract option work sometimes?
+A26. The name probably contains spaces, while acceptable under Windows I wasn't sure the Wii
+     actually allowed filenames like that I didn't bother fixing it.
+
+Q27. I sometimes get "i/o error" when adding partitions and/or opening an ISO - why is this?
+A27. This is due to me not fully creating a boot.bin for the new partition you create. It's a 'soft
+     error' in that things will still work. You may encounter it when importing a partition.
+	 If the ISO is the DVD5 version of SSBB then the reason you have the error is because the channel table still shows
+	 the VC games as being present, though they have been removed. If you delete the VC partitions they'll disappear.
+
+Q28. What about the source code? Can I have a copy?
+A28. Yep. The source is released and should be found somewhere near where you found this FAQ and readme. A lot
+     of it is commented to a reasonable standard.
+
+Q29. I have a great idea to improve the software, how do I do that?
+A29. See the answer to A28 and get a copy of visual C. I'll probably do any small bugfixes anyways.
+
+Q30. I've heared that scrubbed discs do not work under IOS37 - is this true?
+A30. xx      xx       xxxx      xx
+     xxxx    xx     xx    xx    xx
+	 xx xx   xx     xx    xx    xx
+	 xx  xx  xx     xx    xx    xx
+	 xx   xx xx     xx    xx    xx
+	 xx    xxxx     xx    xx
+	 xx      xx       xxxx      xx
+
+	 IT DOES NOT USE THE TRUCHA BUG UNLESS YOU CHANGE A FILE. THE TRUCHA BUG IS FIXED UNDER 37.

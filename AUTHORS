@@ -1,0 +1,27 @@
+The following comes from the original WiiScrubber:
+
+Thanks to:
+1. Waninkoko for releasing the source of the WiiFrii code as it originally allowed
+   me to implement the Trucha bits.
+
+2. Stormyuan for lots of unintentional bug testing :)
+
+3. Everyone else involved in testing at different stages.
+
+4. Eric Young for the SHA code from openssl.
+
+
+Besides that:
+
+Thanks to Arep for FriiDump. Some of the code used by this program, as well as
+most of its build system come from FriiDump.
+
+Other minor pieces of code were taken from tcpdump (www.tcpdump.org), Python
+(www.python.org) and the glibc printf manpage.
+
+Thanks to the ConsoleTribe staff for giving me the possibility to use their
+forum for the program support.
+
+Finally, obvious thanks go out to Nintendo for making all of their great
+consoles, who constantly help me to waste the rest of my spare time I do not
+spend coding ;).

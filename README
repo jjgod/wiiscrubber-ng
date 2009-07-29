@@ -1,0 +1,112 @@
+WiiScrubber NG - A program to make Nintendo Wii discs more compressable
+===============================================================================
+
+This program is a quick'n'dirty port of the famous "WiiScrubber" Windows
+application to UNIX. Contrary to the Windows version, this one is command-line
+only, and only has less features, but it will improve, eventually reaching the
+same number of features of the Windows version.
+
+The exact purpose of this program is, quoting the original one, to find out
+where in the disc image the data is and change the rest of the data to 0xFF.
+This allows compression programs to then compress the image and get a size
+much smaller than without using the program.
+
+This program has not been tested thoroughly, so I cannot guarantee proper
+functionality. I've tried on quite a few files, checking the files that are
+then extracted and all seems correct. But no 100% guarantees can be made that
+the cleaned ISO will work. There is always the potential that Nintendo will
+start checking for these sort of changes in a firmware update. Just be aware.
+
+The WiiScrubber version this program is based on is 1.31 FINAL FINAL, hence the
+"unusual" version this program has. The supported operating systems, at the
+moment, are GNU/Linux and MacOS X.
+
+This port has been possible as Dack, the original author of WiiScrubber, has
+released the sources to his program.
+
+
+===============================================================================
+Installation
+===============================================================================
+If you are a MacOS X user, probably you will have downloaded the binaries,
+which come with an installer, so the installation should be straightforward.
+
+If you downloaded the sources, you will need to compile them. WiiScrubber NG
+uses CMake, for easy portability, so you will need to get it from cmake.org. On
+UNIX just do the following, from the directory where you unpacked the sources
+into:
+
+$ mkdir BUILD
+$ cd BUILD
+$ cmake .. (or cmake -DCMAKE_INSTALL_PREFIX=/usr if you know what you are doing)
+$ make
+$ make install
+
+You will also need a file containing the Wii common AES key. Such key is not
+distributed with the program, as this would be illegal, so DO NOT EVEN TRY TO
+ASK IT TO ME. See http://tinyurl.com/wiikeys for details on the cryptographic
+leys used by the Wii. Once you have the correct key, plase it in a file named
+"key.bin" in the same directory as the ISO files you will be working on. A
+better solution will be implemented in the future.
+
+
+===============================================================================
+Usage
+===============================================================================
+WiiScrubber NG is a command-line program, so you will need to run it from a
+terminal. To scrub an image you can do the following:
+
+$ wiiscrubber -s mario.iso -o mario_scrubbed.iso
+
+If you also want to create a "diff" file, which will enable you to recreate the
+original ISO starting from a scrubbed one, you can use the "-d" option:
+
+$ wiiscrubber -s mario.iso -o mario_scrubbed.iso -d mario_scrubbed.diff
+
+If you have both the scrubbed and the diff files, you can recreate the original
+ISO with:
+
+$ wiiscrubber -u mario_scrubbed.iso -d mario_scrubbed.diff -o mario.iso
+
+The other WiiScrubber original functions, like partitions manipulation, single
+file extraction/replacement, etc., are not ported, yet.
+
+To see a list of all possible options, try:
+
+$ wiiscrubber -h
+
+===============================================================================
+Support
+===============================================================================
+If you want to contact me, you can do so by e-mail, writing to software at
+sukkology dot net. Another means of support will be the forums of the Italian
+ConsoleTribe forum, at http://wii.console-tribe.com.
+If you need help, just open a thread in any section there, even in English.
+
+Patches are welcome, too: put something like "[PATCH]" in the e-mail/topic
+subject, so that I can easily spot them.
+
+New releases will be announced on that forum.
+
+If you want to donate to the project, do not do it, and donate to one of the
+free Wii modchip projects out there, such as OpenWii, WiiFree or YAOSM.
+
+
+===============================================================================
+Disclaimer
+===============================================================================
+The original version of WiiScrubber comes with no precise licensing terms.
+Although, it contains code from wiifuse, which is licensed under the GNU
+General Public License version 2, thus WiiScrubber should use the same license.
+
+This is why I am releasing WiiScrubber NG under the GNU General Public License
+version 2, even though I did not write most of the code. See the COPYING file
+for the precise license terms.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.
+
+Also, please note that this program is not meant to be used to spread game
+piracy, but rather to be instrument to make backups of your own precious
+legally-bought games.
