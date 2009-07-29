@@ -19,9 +19,11 @@ struct options_s {
 	char *output_file;
 	char *diff_file;
 	char *unscrub_file;
+    char *extract_file;
 	bool truchascrub;
 	bool keep_headers;
 	bool force_wii;
+    long partition;
 } options;
 
 
@@ -55,6 +57,7 @@ void help (void) {
 		"Available command line options:\n"
 		" -h, --help			Show this help\n"
 		" -s, --scrub <file>		Scrub the Wii image contained in <file>\n"
+		" -e, --extract <file>		Extract the Wii image contained in <file>\n"
 		" -o, --output <file>		Write the scrubbed/unscrubbed image to <file>\n"
 		" -d, --diff <file>		Read/Write diff file from/to <file>\n"
 		" -u, --unscrub <file>		Unscrub <file>, must be used with -d\n"
@@ -74,6 +77,8 @@ bool optparse (int argc, char **argv) {
 	static struct option long_options[] = {
 		{"help", 0, 0, 'h'},
 		{"scrub", 1, 0, 's'},
+		{"extract", 1, 0, 'e'},
+		{"partition", 1, 0, 'p'},
 		{"output", 1, 0, 'o'},
 		{"diff", 1, 0, 'd'},
 		{"unscrub", 1, 0, 'u'},
@@ -98,15 +103,26 @@ bool optparse (int argc, char **argv) {
 	options.force_wii = false;
 	
 	do {
-		c = getopt_long (argc, argv, "hs:o:d:u:tkw", long_options, &option_index);
+		c = getopt_long (argc, argv, "hs:e:o:d:u:tkw", long_options, &option_index);
 		switch (c) {
 			case 'h':
 				help ();
 				exit (1);
 				break;
+
 			case 's':
 				my_strdup (options.scrub_file, optarg);
 				break;
+
+            case 'e':
+                my_strdup (options.extract_file, optarg);
+				break;
+
+            case 'p':
+                options.partition = strtol(optarg, NULL, 10);
+                printf("partition: %d\n", options.partition);
+                break;
+
 			case 'o':
 				my_strdup (options.output_file, optarg);
 				break;
@@ -141,7 +157,7 @@ bool optparse (int argc, char **argv) {
 
 	/* Sanity checks... */
 	out = false;
-	if (!options.scrub_file && !options.unscrub_file) {
+	if (!options.scrub_file && !options.unscrub_file && !options.extract_file) {
 		fprintf (stderr, "No operation specified. Please use the -s or -u options.\n");
 	} else if (options.scrub_file && !options.output_file && !options.diff_file) {
 		fprintf (stderr,
@@ -167,7 +183,24 @@ int main (int argc, char *argv[]) {
 	welcome ();
 	
 	if (optparse (argc, argv)) {
-		if (options.scrub_file) {
+        if (options.extract_file) {
+            disc = new CWIIDisc ();
+			disc -> Reset ();
+
+            if ((image = disc -> image_init (options.extract_file, options.force_wii))) {
+				disc -> image_parse (image);
+                disc -> ExtractPartitionFiles(image, 2, options.output_file);
+
+                cout << "done." << endl;
+                ret = 0;
+            } else {
+                cout << "Cannot init image" << endl;
+				ret = 1;
+            }
+
+        }
+
+        else if (options.scrub_file) {
 			scrubHeadersMode hmode = options.keep_headers ? SCRUB_KEEP_HEADERS : SCRUB_REMOVE_HEADERS;
 			
 			disc = new CWIIDisc ();
@@ -175,7 +208,7 @@ int main (int argc, char *argv[]) {
 			disc -> Reset ();
 			if ((image = disc -> image_init (options.scrub_file, options.force_wii))) {
 				disc -> image_parse (image);
-				disc -> CleanupISO (options.scrub_file, options.output_file, options.diff_file, hmode);
+				// disc -> CleanupISO (options.scrub_file, options.output_file, options.diff_file, hmode);
 				
 				//	u64 nTestCase;
 				//	nTestCase = (u64) pcWiiDisc->CountBlocksUsed();
@@ -215,51 +248,31 @@ int main (int argc, char *argv[]) {
 
 		// get the text
 		csText = m_cbDISCFILES.GetItemText (hItem);
-		
-		
+
 		// now parse the fields out
 		if (5 ==
 			sscanf (csText, "%s [%I64X] [%I64X] [%I64X] [%d]",
 				    cBuffer, &nPartitionOffset, &nFileOffset,
 				    &nFileSize, &nFSTRef))
-			
 		{
-			
-			//then ask where to save it
+			// then ask where to save it
 			// create the save window 
 			CFileDialog FileDialog (false, NULL, cBuffer);
 			
-			
 			if (FileDialog.DoModal () == IDOK)
-				
 			{
-				
 				// now check to see if we need to change the offsets at all if a -VE reference
 				switch (nFSTRef)
-				
 				{
-						
 					case -4:
-						
 						bOverRide = true;
-						
 						break;
-						
 					case -5:
-						
 					case -6:
-						
 					case -7:
-						
 						// one of the partition sub files
-						nFileOffset =
-						nFileOffset +
-						pImageFile->
-						parts[nPartitionOffset].
-						offset;
-						
+						nFileOffset = nFileOffset + pImageFile->parts[nPartitionOffset].offset;
 						bOverRide = true;
-						
 						break;
 						
 					default:
@@ -271,33 +284,19 @@ int main (int argc, char *argv[]) {
 				
 				// then save if all ok
 				if (true ==
-					pcWiiDisc->
-					SaveDecryptedFile (FileDialog.
-									   GetFileName (),
-									   
+					pcWiiDisc->SaveDecryptedFile(FileDialog.GetFileName (),
 									   pImageFile,
-									   
-									   (u_int32_t)
-									   (nPartitionOffset),
-									   
+									   (u_int32_t)(nPartitionOffset),
 									   nFileOffset,
-									   
 									   nFileSize,
-									   
 									   bOverRide))
-					
 				{
-					
 					AddToLog ("File saved");
-					
 				}
 				
 				else
-					
 				{
-					
 					AddToLog ("Error in saving file");
-					
 				}
 #endif
 

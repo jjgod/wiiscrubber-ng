@@ -88,7 +88,7 @@ public:
 	
 	bool RecreateOriginalFile (char *scrubbed, char *diff, char *output);
 	
-	bool ExtractPartitionFiles (struct image_file *image, u_int32_t nPartition, u_int8_t * cDirPathName);
+	bool ExtractPartitionFiles (struct image_file *image, u_int32_t nPartition, const char * cDirPathName);
 	
 	bool DoPartitionShrink (struct image_file *image,
 							u_int32_t nPartition);

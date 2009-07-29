@@ -4202,7 +4202,7 @@ u_int64_t CWIIDisc::FindFirstData (u_int64_t nStartOffset, u_int64_t nLength,
 ///////////////////////////////////////////////////////////////
 bool CWIIDisc::ExtractPartitionFiles (image_file * image,
 									  u_int32_t nPartition,
-									  u_int8_t * cDirPathName)
+									  const char * cDirPathName)
 {
 	u_int8_t *fst;
 	u_int32_t nfiles;
@@ -4218,7 +4218,7 @@ bool CWIIDisc::ExtractPartitionFiles (image_file * image,
 	}
 	// change to the new directory
 	
-	chdir ((char *) cDirPathName);
+	chdir (cDirPathName);
 	fst = (u_int8_t *) (malloc ((u_int32_t)
 								(image->parts[nPartition].header.
 								 fst_size)));
