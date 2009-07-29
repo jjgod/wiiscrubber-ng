@@ -22,11 +22,14 @@ add_executable (
 	util.h
 )
 
+find_library(CRYPTO_LIBRARY NAMES crypto)
+
 # Link the executable to the Hello library.
 target_link_libraries (
         wiiscrubber
 
 	${OPENSSL_LIBRARIES}
+    ${CRYPTO_LIBRARY}
 )
 
 if (WIN32)
