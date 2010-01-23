@@ -10,6 +10,7 @@ using namespace std;
 #else
 	#include <sys/time.h>
 	#include <getopt.h>
+	#include <cstdlib>
 #endif
 
 
