@@ -7,6 +7,7 @@
 #include <iostream>
 #include <string>
 #include <ctype.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <fcntl.h>
 #include <openssl/ssl.h>
