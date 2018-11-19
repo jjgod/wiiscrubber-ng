@@ -3178,7 +3178,7 @@ bool CWIIDisc::wii_write_clusters (struct image_file * iso, int partition,
 	
 	
 	// calculate number of clusters of data to write
-	nClusters = ((nBytesToWrite - 1) / SIZE_CLUSTER_DATA) + 1;
+	nClusters = ((nBytesToWrite + nClusterOffset - 1) / SIZE_CLUSTER_DATA) + 1;
 	
 	if (nBytesToWrite != (NB_CLUSTER_GROUP * SIZE_CLUSTER_DATA)) {
 		/* Read group clusters and headers */
